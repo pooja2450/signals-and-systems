@@ -1,0 +1,61 @@
+clc;
+clear;
+close all;
+
+% 5(i) Fourier Series Representation of a Periodic Signal
+
+% Signal parameters
+A = 1;
+f0 = 1;
+T = 1/f0;
+
+% Time vector covering two periods
+t = linspace(0, 2*T, 2000);
+
+% Generate half-wave rectified sinusoidal signal
+x = A*sin(2*pi*f0*t);
+x(x < 0) = 0;
+
+% Number of harmonics
+N = 10;
+
+% Calculate Fourier coefficients over one period
+t1 = linspace(0, T, 1000);
+x1 = A*sin(2*pi*f0*t1);
+x1(x1 < 0) = 0;
+
+a0 = (2/T)*trapz(t1, x1)/2;
+
+an = zeros(1, N);
+bn = zeros(1, N);
+
+for k = 1:N
+    an(k) = (2/T)*trapz(t1, ...
+        x1 .* cos(2*pi*k*f0*t1));
+
+    bn(k) = (2/T)*trapz(t1, ...
+        x1 .* sin(2*pi*k*f0*t1));
+end
+
+% Reconstruct the signal using Fourier series
+xFS = a0*ones(size(t));
+
+for k = 1:N
+    xFS = xFS ...
+        + an(k)*cos(2*pi*k*f0*t) ...
+        + bn(k)*sin(2*pi*k*f0*t);
+end
+
+% Plot original and reconstructed signals
+figure;
+
+plot(t, x, 'k', 'LineWidth', 1.5);
+hold on;
+plot(t, xFS, 'r--', 'LineWidth', 1.5);
+
+grid on;
+xlabel('Time (s)');
+ylabel('Amplitude');
+title('Fourier Series Representation of a Periodic Signal');
+legend('Original Signal', 'Fourier Series Reconstruction');
+xlim([0 2*T]);
