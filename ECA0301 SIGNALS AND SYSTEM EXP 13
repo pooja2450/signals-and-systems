@@ -1,0 +1,111 @@
+
+clc;
+clear;
+close all;
+
+% Experiment: Sampling Theorem and Signal Reconstruction
+
+fm = 50;              % Message signal frequency (Hz)
+T = 0.06;             % Observation time (seconds)
+dt = 1e-5;            % Fine time interval
+t = 0:dt:T;           % Continuous-time approximation
+
+% Original continuous-time signal
+x = cos(2*pi*fm*t);
+
+% Different sampling frequencies
+fs_list = [0.5*fm, fm, 2*fm, 5*fm, 10*fm];
+
+labels = {
+    'fs = 0.5 fm (Aliasing)'
+    'fs = fm (Undersampling)'
+    'fs = 2 fm (Nyquist Rate)'
+    'fs = 5 fm (Oversampling)'
+    'fs = 10 fm (Oversampling)'
+};
+
+% Plot sampling at different frequencies
+figure('Name', 'Sampling at Different Rates');
+
+for k = 1:length(fs_list)
+
+    fs = fs_list(k);
+    n = 0:1/fs:T;
+    xn = cos(2*pi*fm*n);
+
+    subplot(length(fs_list), 1, k);
+
+    plot(t, x, 'b-', 'LineWidth', 1);
+    hold on;
+
+    stem(n, xn, 'r', 'filled');
+
+    title(labels{k});
+    xlabel('Time (s)');
+    ylabel('Amplitude');
+    grid on;
+    hold off;
+
+end
+
+% Display Nyquist rate
+fprintf('Nyquist rate (2*fm) = %.2f Hz\n', 2*fm);
+
+% Reconstruction using sinc interpolation
+err = zeros(size(fs_list));
+
+for k = 1:length(fs_list)
+
+    fs = fs_list(k);
+    n = 0:1/fs:T;
+    xn = cos(2*pi*fm*n);
+
+    x_recon = zeros(size(t));
+
+    for i = 1:length(n)
+        x_recon = x_recon + xn(i) * sinc(fs*(t - n(i)));
+    end
+
+    % Mean absolute reconstruction error
+    err(k) = mean(abs(x - x_recon));
+
+    fprintf(['fs = %6.1f Hz (fs/fm = %4.1f) ', ...
+        '-> Mean reconstruction error = %.5f\n'], ...
+        fs, fs/fm, err(k));
+
+end
+
+% Reconstruction at fs = 10 fm
+fs = 10*fm;
+n = 0:1/fs:T;
+xn = cos(2*pi*fm*n);
+
+x_recon = zeros(size(t));
+
+for i = 1:length(n)
+    x_recon = x_recon + xn(i) * sinc(fs*(t - n(i)));
+end
+
+figure('Name', 'Sinc Reconstruction');
+
+plot(t, x, 'b', 'LineWidth', 1.5);
+hold on;
+plot(t, x_recon, 'r--', 'LineWidth', 1.2);
+
+legend('Original Signal', 'Reconstructed Signal');
+title('Sinc-Interpolated Signal Reconstruction');
+xlabel('Time (s)');
+ylabel('Amplitude');
+grid on;
+hold off;
+
+% Reconstruction error versus sampling ratio
+figure('Name', 'Reconstruction Error');
+
+semilogy(fs_list/fm, max(err, eps), '-o', ...
+    'LineWidth', 1.5);
+
+xlabel('Sampling Ratio (f_s / f_m)');
+ylabel('Mean Absolute Error (Log Scale)');
+title('Reconstruction Error vs Sampling Ratio');
+grid on;
