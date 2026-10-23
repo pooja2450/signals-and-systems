@@ -1,0 +1,68 @@
+
+clc;
+clear;
+close all;
+
+% 5(iv) Fourier Series Reconstruction and Error Analysis
+
+% Define signal parameters
+f0 = 1;
+T = 1/f0;
+t = linspace(0, 2*T, 4000);
+
+% Generate half-wave rectified sinusoidal signal
+x = max(sin(2*pi*f0*t), 0);
+
+% Number of harmonics
+N = 10;
+
+% Select one period for coefficient calculation
+tt = linspace(0, T, 2000);
+xx = max(sin(2*pi*f0*tt), 0);
+
+% Calculate Fourier coefficients
+a0 = (2/T)*trapz(tt, xx)/2;
+
+an = zeros(1, N);
+bn = zeros(1, N);
+
+for k = 1:N
+    an(k) = (2/T)*trapz(tt, ...
+        xx .* cos(2*pi*k*f0*tt));
+
+    bn(k) = (2/T)*trapz(tt, ...
+        xx .* sin(2*pi*k*f0*tt));
+end
+
+% Reconstruct the signal
+xr = a0*ones(size(t));
+
+for k = 1:N
+    xr = xr ...
+        + an(k)*cos(2*pi*k*f0*t) ...
+        + bn(k)*sin(2*pi*k*f0*t);
+end
+
+% Calculate reconstruction error
+err = x - xr;
+
+% Plot original and reconstructed signals
+figure;
+
+subplot(2,1,1);
+plot(t, x, 'k', 'LineWidth', 1.1);
+hold on;
+plot(t, xr, 'r--', 'LineWidth', 1.1);
+grid on;
+xlabel('Time (s)');
+ylabel('Amplitude');
+title('Original and Reconstructed Signals');
+legend('Original', 'Reconstructed');
+
+% Plot reconstruction error
+subplot(2,1,2);
+plot(t, err, 'b', 'LineWidth', 1.1);
+grid on;
+xlabel('Time (s)');
+ylabel('Error');
+title('Reconstruction Error');
