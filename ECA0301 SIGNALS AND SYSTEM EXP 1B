@@ -1,0 +1,59 @@
+
+clc;
+clear;
+close all;
+
+% Define discrete-time index and parameters
+n = -20:20;
+A = 2;
+f0 = 0.1;
+a = 0.1;
+
+% Generate discrete-time signals
+imp = double(n == 0);
+step = double(n >= 0);
+ramp = n .* step;
+expSig = (0.8).^n .* step;
+sinSig = A * sin(2 * pi * f0 * n);
+
+% Plot Unit Impulse
+figure;
+
+subplot(3,2,1);
+stem(n, imp, 'filled');
+grid on;
+title('Unit Impulse');
+xlabel('n');
+ylabel('Amplitude');
+
+% Plot Unit Step
+subplot(3,2,2);
+stem(n, step, 'filled');
+grid on;
+title('Unit Step');
+xlabel('n');
+ylabel('Amplitude');
+
+% Plot Ramp
+subplot(3,2,3);
+stem(n, ramp, 'filled');
+grid on;
+title('Ramp Signal');
+xlabel('n');
+ylabel('Amplitude');
+
+% Plot Exponential
+subplot(3,2,4);
+stem(n, expSig, 'filled');
+grid on;
+title('Exponential Signal');
+xlabel('n');
+ylabel('Amplitude');
+
+% Plot Discrete Sinusoid
+subplot(3,2,5);
+stem(n, sinSig, 'filled');
+grid on;
+title('Discrete Sinusoid');
+xlabel('n');
+ylabel('Amplitude');
