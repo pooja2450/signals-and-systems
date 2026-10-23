@@ -1,0 +1,81 @@
+
+clc;
+clear;
+close all;
+
+%% Experiment 11: Frequency Response, Poles-Zeros and Stability
+% Transfer function:
+% H(s) = (s + 2)/(s^2 + 4s + 5)
+
+% Define the transfer function
+num = [1 2];
+den = [1 4 5];
+
+sys = tf(num, den);
+
+% Display transfer function, poles and zeros
+disp('Transfer function:');
+sys
+
+disp('Poles:');
+disp(pole(sys));
+
+disp('Zeros:');
+disp(zero(sys));
+
+%% 1. Pole-Zero Map
+figure;
+pzmap(sys);
+grid on;
+title('Pole-Zero Map');
+
+%% 2. Impulse Response
+t = 0:0.01:8;
+
+figure;
+impulse(sys, t);
+grid on;
+title('Impulse Response');
+xlabel('Time (s)');
+ylabel('h(t)');
+
+%% 3. Step Response
+figure;
+step(sys, t);
+grid on;
+title('Step Response');
+xlabel('Time (s)');
+ylabel('y(t)');
+
+%% 4. Frequency Response
+w = logspace(-2, 2, 700);
+
+[mag, phase, wout] = bode(sys, w);
+
+mag = squeeze(mag);
+phase = squeeze(phase);
+
+% Magnitude response in decibels
+figure;
+semilogx(wout, 20*log10(mag), 'LineWidth', 1.4);
+grid on;
+title('Magnitude Frequency Response');
+xlabel('Frequency (rad/s)');
+ylabel('Magnitude (dB)');
+
+% Phase response in degrees
+figure;
+semilogx(wout, phase, 'LineWidth', 1.4);
+grid on;
+title('Phase Frequency Response');
+xlabel('Frequency (rad/s)');
+ylabel('Phase (degrees)');
+
+%% 5. Stability Analysis
+p = pole(sys);
+
+if all(real(p) < 0)
+    disp('The system is BIBO stable.');
+else
+    disp('The system is not asymptotically stable.');
+end
