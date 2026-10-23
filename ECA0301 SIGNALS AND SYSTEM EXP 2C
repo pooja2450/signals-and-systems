@@ -1,0 +1,101 @@
+clc;
+clear;
+close all;
+
+% Define continuous-time signal
+t = -1:0.001:1;
+
+% Original signal
+x = sin(2*pi*5*t);
+
+% Signal transformations
+xA = 2*x;
+xC = sin(2*pi*5*(2*t));
+xE = sin(2*pi*5*(t/2));
+xS = sin(2*pi*5*(t-0.2));
+xR = sin(2*pi*5*(-t));
+
+% Plot continuous-time signals
+figure;
+
+subplot(3,2,1);
+plot(t,x);
+grid on;
+title('Original x(t)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(3,2,2);
+plot(t,xA);
+grid on;
+title('Amplitude Scaling: 2x(t)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(3,2,3);
+plot(t,xC);
+grid on;
+title('Time Compression: x(2t)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(3,2,4);
+plot(t,xE);
+grid on;
+title('Time Expansion: x(t/2)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(3,2,5);
+plot(t,xS);
+grid on;
+title('Time Shifting: x(t-0.2)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(3,2,6);
+plot(t,xR);
+grid on;
+title('Time Reversal: x(-t)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+% Define discrete-time signals
+n = 0:2;
+x1 = [1 2 1];
+x2 = [1 1 2];
+
+% Discrete-time operations
+xAdd = x1 + x2;
+xMul = x1 .* x2;
+
+% Plot discrete-time signals
+figure;
+
+subplot(2,2,1);
+stem(n,x1,'filled');
+grid on;
+title('x[n]');
+xlabel('n');
+ylabel('Amplitude');
+
+subplot(2,2,2);
+stem(n,x2,'filled');
+grid on;
+title('y[n]');
+xlabel('n');
+ylabel('Amplitude');
+
+subplot(2,2,3);
+stem(n,xAdd,'filled');
+grid on;
+title('Addition: x[n] + y[n]');
+xlabel('n');
+ylabel('Amplitude');
+
+subplot(2,2,4);
+stem(n,xMul,'filled');
+grid on;
+title('Multiplication: x[n] .* y[n]');
+xlabel('n');
+ylabel('Amplitude');
