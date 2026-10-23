@@ -1,0 +1,125 @@
+clc;
+clear;
+close all;
+
+% Experiment: DTFT Properties Verification
+
+% Rectangular pulse
+N = 10;
+n = 0:N-1;
+x = ones(1, N);
+
+% Frequency grid
+w = linspace(-pi, pi, 1024);
+
+% Calculate DTFT
+X = zeros(size(w));
+
+for k = 1:length(w)
+    X(k) = sum(x .* exp(-1j * w(k) * n));
+end
+
+% Plot magnitude and phase spectra
+figure('Name', 'DTFT Magnitude and Phase');
+
+subplot(2, 1, 1);
+plot(w/pi, abs(X), 'b', 'LineWidth', 1.2);
+xlabel('\omega / \pi');
+ylabel('|X(e^{j\omega})|');
+title('DTFT Magnitude Spectrum');
+grid on;
+
+subplot(2, 1, 2);
+plot(w/pi, angle(X), 'r', 'LineWidth', 1.2);
+xlabel('\omega / \pi');
+ylabel('\angle X(e^{j\omega}) (rad)');
+title('DTFT Phase Spectrum');
+grid on;
+
+% Periodicity verification over two periods
+w2 = linspace(-2*pi, 2*pi, 2048);
+X2 = zeros(size(w2));
+
+for k = 1:length(w2)
+    X2(k) = sum(x .* exp(-1j * w2(k) * n));
+end
+
+figure('Name', 'DTFT Periodicity');
+
+plot(w2/pi, abs(X2), 'LineWidth', 1.2);
+xlabel('\omega / \pi');
+ylabel('|X(e^{j\omega})|');
+title('DTFT Magnitude over Two Periods');
+grid on;
+
+% Time-shift property verification
+n0 = 3;
+
+x_shift = [zeros(1, n0), x];
+n_shift = 0:length(x_shift)-1;
+
+Xs = zeros(size(w));
+
+for k = 1:length(w)
+    Xs(k) = sum(x_shift .* exp(-1j * w(k) * n_shift));
+end
+
+% Magnitude error
+mag_err = max(abs(abs(Xs) - abs(X)));
+
+% Phase-shift property:
+% Xs(w) = exp(-j*w*n0) * X(w)
+phase_theory = -w * n0;
+
+phase_difference = angle(Xs) - angle(X) - phase_theory;
+phase_difference = mod(phase_difference + pi, 2*pi) - pi;
+
+% Ignore frequencies where the original DTFT is approximately zero
+valid = abs(X) > 1e-8;
+
+if any(valid)
+    phase_err = max(abs(phase_difference(valid)));
+else
+    phase_err = NaN;
+end
+
+fprintf('Time-shift property:\n');
+fprintf('Maximum magnitude error = %.4g\n', mag_err);
+fprintf('Maximum phase-term error (rad) = %.4g\n', phase_err);
+
+% Linearity property verification
+a = 2;
+b = -1;
+
+x1 = ones(1, 5);
+x2 = [1 0.8 0.6 0.4 0.2 0 0 0];
+
+n1 = 0:length(x1)-1;
+n2 = 0:length(x2)-1;
+
+% Extend x1 to match the length of x2
+x1_padded = [x1, zeros(1, length(x2)-length(x1))];
+
+% Linear combination of signals
+xc = a*x1_padded + b*x2;
+nc = 0:length(xc)-1;
+
+X1 = zeros(size(w));
+X2v = zeros(size(w));
+Xcomb = zeros(size(w));
+
+for k = 1:length(w)
+
+    X1(k) = sum(x1 .* exp(-1j * w(k) * n1));
+
+    X2v(k) = sum(x2 .* exp(-1j * w(k) * n2));
+
+    Xcomb(k) = sum(xc .* exp(-1j * w(k) * nc));
+
+end
+
+% Verify linearity
+lin_err = max(abs(Xcomb - (a*X1 + b*X2v)));
+
+fprintf('\nLinearity property:\n');
+fprintf('Maximum complex error = %.4g\n', lin_err);
