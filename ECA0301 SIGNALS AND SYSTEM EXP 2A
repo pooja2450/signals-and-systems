@@ -1,0 +1,50 @@
+
+clc;
+clear;
+close all;
+
+% Define time vector
+t = -1:0.001:1;
+
+% Original signal
+x = sin(2*pi*5*t);
+
+% Amplitude scaling
+yA = 2*x;
+
+% Time compression
+yC = sin(2*pi*5*(2*t));
+
+% Time expansion
+yE = sin(2*pi*5*(t/2));
+
+% Plot the signals
+figure;
+
+subplot(2,2,1);
+plot(t, x, 'LineWidth', 1.2);
+grid on;
+title('Original Signal x(t)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(2,2,2);
+plot(t, yA, 'LineWidth', 1.2);
+grid on;
+title('Amplitude Scaling: 2x(t)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(2,2,3);
+plot(t, yC, 'LineWidth', 1.2);
+grid on;
+title('Time Compression: x(2t)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(2,2,4);
+plot(t, yE, 'LineWidth', 1.2);
+grid on;
+title('Time Expansion: x(t/2)');
+xlabel('Time (s)');
+ylabel('Amplitude');
