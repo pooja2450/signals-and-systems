@@ -1,0 +1,53 @@
+
+clc;
+clear;
+close all;
+
+%% 7(iii) Verification of Fourier Transform Properties and Frequency-Domain Characteristics
+
+figure;
+
+% Define the original signal
+t = -2:0.001:2;
+dt = t(2) - t(1);
+
+x = exp(-t.^2);
+
+% Apply time shifting: x(t - t0)
+t0 = 0.4;
+x_shift = interp1(t, x, t - t0, 'linear', 0);
+
+% Calculate Fourier Transform of the original signal
+X = fftshift(fft(x)) * dt;
+
+% Define the frequency axis
+N = length(x);
+f = (-N/2:N/2-1) / (N*dt);
+
+% Theoretical time-shift property
+% x(t - t0) <-> X(f)*exp(-j*2*pi*f*t0)
+X_shift_theory = X .* exp(-1j*2*pi*f*t0);
+
+% Fourier Transform of the shifted signal
+X_shift = fftshift(fft(x_shift)) * dt;
+
+% Plot magnitude comparison
+subplot(2,1,1);
+plot(f, abs(X_shift), f, abs(X_shift_theory), '--');
+xlim([-5 5]);
+grid on;
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+title('Time-Shift Property: Magnitude Comparison');
+legend('Computed', 'Theoretical');
+
+% Plot phase comparison
+subplot(2,1,2);
+plot(f, unwrap(angle(X_shift)), ...
+    f, unwrap(angle(X_shift_theory)), '--');
+xlim([-5 5]);
+grid on;
+xlabel('Frequency (Hz)');
+ylabel('Phase (rad)');
+title('Time-Shift Property: Phase Comparison');
+legend('Computed', 'Theoretical');
