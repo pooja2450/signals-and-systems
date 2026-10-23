@@ -1,0 +1,54 @@
+clc;
+clear;
+close all;
+
+% Define time and signal parameters
+t = -1:0.001:1;
+A = 2;
+f0 = 5;
+a = 1;
+
+% Generate signals
+imp = double(abs(t) < 0.0005);
+step = double(t >= 0);
+ramp = t .* step;
+expSig = exp(-a * t) .* step;
+sinSig = A * sin(2 * pi * f0 * t);
+
+% Plot all signals
+figure;
+
+subplot(3, 2, 1);
+plot(t, imp, 'LineWidth', 1.5);
+grid on;
+title('Unit Impulse');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(3, 2, 2);
+plot(t, step, 'LineWidth', 1.5);
+grid on;
+title('Unit Step');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(3, 2, 3);
+plot(t, ramp, 'LineWidth', 1.5);
+grid on;
+title('Ramp Signal');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(3, 2, 4);
+plot(t, expSig, 'LineWidth', 1.5);
+grid on;
+title('Exponential Signal');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(3, 2, 5);
+plot(t, sinSig, 'LineWidth', 1.5);
+grid on;
+title('Sinusoidal Signal');
+xlabel('Time (s)');
+ylabel('Amplitude');
