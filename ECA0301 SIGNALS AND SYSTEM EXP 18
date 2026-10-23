@@ -1,0 +1,101 @@
+
+clc;
+clear;
+close all;
+
+% Experiment 18: Z-Transform and Inverse Z-Transform
+% x[n] = (0.5)^n u[n]
+
+% Define the sequence
+n = 0:10;
+x = (0.5).^n;
+
+% Analytical Z-transform
+% X(z) = z / (z - 0.5)
+% ROC: |z| > 0.5
+
+syms z k
+
+Xz = z / (z - 0.5);
+
+% Calculate inverse Z-transform symbolically
+xInverse = iztrans(Xz, z, k);
+
+disp('Z-transform X(z) = ');
+pretty(Xz);
+
+disp('Inverse Z-transform (symbolic) = ');
+pretty(xInverse);
+
+% Numerical reconstruction for n = 0 to 10
+xRec = (0.5).^n;
+
+% Calculate reconstruction error
+reconstructionError = max(abs(x - xRec));
+
+fprintf('Maximum reconstruction error = %.3e\n', ...
+    reconstructionError);
+
+fprintf('Pole = 0.5\n');
+fprintf('Zero = 0\n');
+fprintf('ROC for right-sided sequence: |z| > 0.5\n');
+
+% Plot results
+figure('Name', 'Experiment 18: Z-Transform and Inverse');
+
+% Original sequence
+subplot(2, 2, 1);
+
+stem(n, x, 'filled');
+grid on;
+xlabel('Sample index n');
+ylabel('Amplitude');
+title('Original Sequence x[n] = (0.5)^n u[n]');
+
+% Reconstructed sequence
+subplot(2, 2, 2);
+
+stem(n, xRec, 'r', 'filled');
+grid on;
+xlabel('Sample index n');
+ylabel('Amplitude');
+title('Inverse Z-Transform Reconstruction');
+legend('Reconstructed x[n]');
+
+% Pole-zero plot
+subplot(2, 2, 3);
+
+zplane([1 0], [1 -0.5]);
+grid on;
+title('Pole-Zero Plot');
+
+% ROC visualization
+subplot(2, 2, 4);
+
+theta = linspace(0, 2*pi, 500);
+
+% Unit circle
+plot(cos(theta), sin(theta), 'k--', 'LineWidth', 1);
+hold on;
+
+% ROC boundary
+plot(0.5*cos(theta), 0.5*sin(theta), ...
+    'b:', 'LineWidth', 1.5);
+
+% Pole
+plot(0.5, 0, 'rx', 'MarkerSize', 10, ...
+    'LineWidth', 2);
+
+axis equal;
+grid on;
+
+xlabel('Real(z)');
+ylabel('Imaginary(z)');
+title('ROC Boundary and Unit Circle');
+
+legend('Unit circle |z| = 1', ...
+       'ROC boundary |z| = 0.5', ...
+       'Pole at z = 0.5', ...
+       'Location', 'best');
+
+hold off;
