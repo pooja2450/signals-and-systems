@@ -1,0 +1,46 @@
+
+clc;
+clear;
+close all;
+
+% Define time parameters
+dt = 0.001;
+t = 0:dt:5;
+
+% Generate signals
+xE = exp(-t);
+xP = sin(2*pi*5*t);
+
+% Calculate energy of exponential signal
+E_num = trapz(t, abs(xE).^2);
+
+% Calculate average power over 2 seconds
+T = 2;
+idx = t <= T;
+t1 = t(idx);
+x1 = xP(idx);
+
+P_num = (1/(t1(end)-t1(1))) * ...
+    trapz(t1, abs(x1).^2);
+
+% Plot energy signal
+figure;
+
+subplot(2,1,1);
+plot(t, xE, 'LineWidth', 1.2);
+grid on;
+title('Energy Signal e^{-t}u(t)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+% Plot power signal
+subplot(2,1,2);
+plot(t, xP, 'LineWidth', 1.2);
+grid on;
+title('Power Signal sin(2\pi5t)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+% Display results
+fprintf('Numerical energy = %g\n', E_num);
+fprintf('Numerical average power = %g\n', P_num);
